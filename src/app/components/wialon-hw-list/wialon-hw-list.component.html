@@ -1,0 +1,6 @@
+<mat-selection-list [(ngModel)]="selectedOptions" (ngModelChange)="dataSelection($event)"
+                    (selectionChange)="selectionChange($event)">
+  <mat-list-option *ngFor="let item of items" value="{{(item)}}">
+    {{(item)}}
+  </mat-list-option>
+</mat-selection-list>

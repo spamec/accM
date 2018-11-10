@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&subset=cyrillic,cyrillic-ext');
+
+.row-wrap {
+  margin: 0 !important;
+}
+
+app-wialon-group-list {
+  height: 100vh !important;
+  overflow: hidden;
+}
+
+app-wialon-accounts-list {
+  overflow-y: auto !important;
+  height: 100vh !important;
+
+}
+
