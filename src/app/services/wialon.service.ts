@@ -14,22 +14,10 @@ export class WialonService {
   }
 
 
-  get hwIdList() {
-    return this._hwIdListSubject.asObservable();
-  }
-
-  @Input( 'hwIdList' ) set hwIdList(data: any) {
-    this._hwIdList = data;
-    this._hwIdListSubject.next( this._hwIdList );
-  }
-
   private _wialon: any;
   private _qx: any;
   private _isLogin: boolean;
 
-
-  private _hwIdList: any;
-  private _hwIdListSubject = new Subject<any>();
 
   public initPromise;
   public api;
@@ -72,9 +60,10 @@ export class WialonService {
 
   }
 
+
   private _init() {
 
-    this._hwIdList = {};
+
     this.initPromise = this.initSdk();
     this.initPromise.then( () => {
       this.api = {
@@ -108,11 +97,10 @@ export class WialonService {
 
 
         },
-
-
-        aroupList: () => {
+        groupList: () => {
 
           return new Promise( (resolve, reject) => {
+
             if (!this._isLogin) {
               resolve( [] );
             }
@@ -138,6 +126,72 @@ export class WialonService {
               }, this ) );
           } );
 
+
+        },
+        hwIdList: (accountId: any) => {
+          return new Promise( (resolve, reject) => {
+
+            let items = [];
+            if (!this._isLogin) {
+              resolve( items );
+            }
+            // if (!this._hwIdList.hasOwnProperty( accountId )) {
+            const spec_group = {
+              itemsType: 'avl_unit',
+              propName: 'sys_billing_account_guid',
+              propValueMask: accountId || '*',
+              sortType: 'sys_name'
+            };
+
+            const flags_group = 257;
+            this._wialon.core.Session.getInstance().searchItems( spec_group, true, flags_group,
+              0, 0, this._qx.lang.Function.bind( function (code, data) {
+                if (code || !data) {
+                  console.log( (accountId + ': List of units empty.') );
+                } else if (!data.items || data.items.length < 1) {
+                  console.log( (accountId + 'List of units empty.') );
+                } else {
+                  items = data.items.reduce( function (carry, item) {
+                    if (item.getDeviceTypeId() && (-1 === carry.indexOf( item.getDeviceTypeId() ))) {
+                      carry.push( item.getDeviceTypeId() );
+                    }
+                    return carry;
+                  }, [] );
+                }
+                resolve( items );
+              }, this ) );
+            /* } else {
+               items = this._hwIdList[accountId];
+               resolve( items);
+             }*/
+
+          } );
+
+
+        },
+
+        hwNameList: (hwIdList: string[]) => {
+          return new Promise( (resolve, reject) => {
+            let items = [];
+            if (!this._isLogin) {
+              resolve( items );
+            }
+            const param = {
+              filterType: 'id',
+              filterValue: hwIdList,
+              includeType: false,
+              ignoreRename: false
+            };
+            this._wialon.core.Session.getInstance().getHwTypes( param, this._qx.lang.Function.bind( function (code, data) {
+
+              if (code || !data) {
+                console.log( ('List of hw empty.') );
+              } else {
+                items = data;
+              }
+              resolve( items );
+            }, this ) );
+          } );
 
         }
       };
@@ -198,65 +252,6 @@ export class WialonService {
         // login(101);
       }
     } );
-
-  }
-
-
-  public updateHwId(listOfAccountId: any[]) {
-    const __hwIdList = {};
-    const __promises = [];
-    listOfAccountId.forEach( (accountId) => {
-      __promises.push( this._loadHwIdByAccountId( parseInt( accountId, 10 ) ) );
-
-    } );
-
-    Promise.all( __promises ).then( (answers: any) => {
-      answers.forEach( (data: { accountId, items }) => {
-        __hwIdList[data.accountId] = data.items;
-      } );
-      this.hwIdList = __hwIdList;
-
-    } );
-
-  }
-
-  private _loadHwIdByAccountId(accountId: any) {
-    return new Promise( (resolve, reject) => {
-      let items = [];
-      if (!this._isLogin) {
-        resolve( {accountId, items} );
-      }
-      if (!this._hwIdList.hasOwnProperty( accountId )) {
-        const spec_group = {
-          itemsType: 'avl_unit',
-          propName: 'sys_billing_account_guid',
-          propValueMask: accountId || '*',
-          sortType: 'sys_name'
-        };
-        const flags_group = 257;
-        this._wialon.core.Session.getInstance().searchItems( spec_group, true, flags_group,
-          0, 0, this._qx.lang.Function.bind( function (code, data) {
-            if (code || !data) {
-              console.log( (accountId + ': List of units empty.') );
-            } else if (!data.items || data.items.length < 1) {
-              console.log( (accountId + 'List of units empty.') );
-            } else {
-              items = data.items.reduce( function (carry, item) {
-                if (item.getDeviceTypeId() && (-1 === carry.indexOf( item.getDeviceTypeId() ))) {
-                  carry.push( item.getDeviceTypeId() );
-                }
-                return carry;
-              }, [] );
-            }
-            resolve( {accountId, items} );
-          }, this ) );
-      } else {
-        items = this._hwIdList[accountId];
-        resolve( {accountId, items} );
-      }
-
-    } );
-
 
   }
 

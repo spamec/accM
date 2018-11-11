@@ -50,6 +50,7 @@ import {
   MatTreeModule,
   MatFormFieldModule
 } from '@angular/material';
+import {TasksListComponent} from './components/tasks-list/tasks-list.component';
 
 @NgModule( {
   exports: [
@@ -99,7 +100,8 @@ export class DemoMaterialModule {
     AppComponent,
     WialonAccountsListComponent,
     WialonHwListComponent,
-    WialonGroupListComponent
+    WialonGroupListComponent,
+    TasksListComponent
   ],
   imports: [
     BrowserModule,

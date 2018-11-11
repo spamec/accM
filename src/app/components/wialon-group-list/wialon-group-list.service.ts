@@ -8,8 +8,9 @@ import {WialonService} from '../../services/wialon.service';
 export class WialonGroupListService {
 
   constructor(private wialon: WialonService) {
+    this.filtred = false;
     wialon.initPromise.then( () => {
-      wialon.api.aroupList().then( (data) => {
+      wialon.api.groupList().then( (data) => {
         this.groupList = data;
       } );
     } );
@@ -29,10 +30,12 @@ export class WialonGroupListService {
 
 
   get selectedOptions() {
+    console.log( 'get selectedOptions' );
     return this._selectedOptions;
   }
 
   @Input( 'selectedOptions' ) set selectedOptions(data: any) {
+    console.log( 'set selectedOptions' );
 
     this._selectedOptions = data;
     this._selectedOptionsSubject.next( this._selectedOptions );
@@ -44,4 +47,6 @@ export class WialonGroupListService {
   get observableSelectedOptions() {
     return this._selectedOptionsSubject.asObservable();
   }
+
+  public filtred = true;
 }

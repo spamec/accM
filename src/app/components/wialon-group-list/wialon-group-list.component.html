@@ -6,7 +6,7 @@
   </button>
 </mat-form-field>
 
-<mat-selection-list [(ngModel)]="service.selectedOptions" (ngModelChange)="dataSelection($event)">
+<mat-selection-list [(ngModel)]="selectedOptions" (ngModelChange)="dataSelection($event)">
   <mat-list-option *ngFor="let item of items" value="{{getId(item)}}">
     {{getName(item)}}
   </mat-list-option>

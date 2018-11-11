@@ -8,12 +8,14 @@ import {WialonService} from '../../services/wialon.service';
 export class WialonAccountsListService {
 
   constructor(private wialon: WialonService) {
+    this.filtred = false;
     wialon.initPromise.then( () => {
       wialon.api.accountList().then( (data) => {
         this.accountList = data;
       } );
     } );
   }
+
 
   get accountList() {
     return this._accountListSubject.asObservable();
@@ -44,4 +46,6 @@ export class WialonAccountsListService {
   get observableSelectedOptions() {
     return this._selectedOptionsSubject.asObservable();
   }
+
+  public filtred = true;
 }

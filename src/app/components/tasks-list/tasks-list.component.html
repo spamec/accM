@@ -1,0 +1,29 @@
+<h2 matSubheader>Задания</h2>
+<!--<mat-form-field class="search-form-field">
+  <input matInput type="text" placeholder="Поиск..." [(ngModel)]="filter" (ngModelChange)="onSearch($event)">
+  <button mat-button *ngIf="filter" matSuffix mat-icon-button aria-label="Clear" (click)="onSearch('')">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>-->
+<mat-toolbar color="gray">
+  <button *ngIf="_iconLoad" mat-button (click)="setItem({})">
+    <mat-icon>add</mat-icon>
+    Add new
+  </button>
+  <span class="pull-right"></span>
+  <button *ngIf="_iconLoad" mat-button mat-icon-button aria-label="Get" (click)="getItems()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-list>
+  <mat-list-item *ngFor="let item of items">
+    <button mat-button aria-label="Info" (click)="setItem(item)">
+      {{getName(item)}}
+    </button>
+    <!--<button mat-button mat-icon-button aria-label="Delete">-->
+    <!--<mat-icon *ngIf="_iconLoad" (click)="getItems()">delete</mat-icon>-->
+    <!--</button>-->
+
+  </mat-list-item>
+</mat-list>

@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {WialonService} from '../../services/wialon.service';
 import {WialonAccountsListService} from './wialon-accounts-list.service';
+import {WialonHwListService} from '../wialon-hw-list/wialon-hw-list.service';
 import {WialonBaseList} from '../wialon-base-list';
 
 
@@ -11,11 +11,21 @@ import {WialonBaseList} from '../wialon-base-list';
 } )
 export class WialonAccountsListComponent extends WialonBaseList implements OnInit, OnDestroy {
 
-  constructor(private wialonService: WialonService, public service: WialonAccountsListService) {
+  constructor(public service: WialonAccountsListService, private hwListService: WialonHwListService) {
     super();
     this.filter = 'sd';
     this.getItems();
-    // this.selectedOptions = service.selectedOptions;
+    this._selectedSubscribe = service.observableSelectedOptions.subscribe( options => {
+      // if (this.selectedOptions !== options) {
+      if (this.service.filtred) {
+        this.onSearch( options );
+      } else {
+        this.onSearch( this.filter );
+      }
+      this.selectedOptions = options;
+      this.hwListService.updateHwId( options );
+      // }
+    } );
   }
 
   getItems() {
@@ -26,7 +36,8 @@ export class WialonAccountsListComponent extends WialonBaseList implements OnIni
   }
 
   dataSelection(accountsId: any) {
-    this.wialonService.updateHwId( accountsId );
+    console.log( 'new', accountsId );
+    this.service.selectedOptions = accountsId;
   }
 
 }

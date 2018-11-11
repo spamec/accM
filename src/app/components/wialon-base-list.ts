@@ -7,6 +7,9 @@ export class WialonBaseList implements OnInit, OnDestroy {
 
   }
 
+  _selectedSubscribe: any;
+  selectedOptions: any;
+
   _itemsSubscribe: any;
   _items: any;
   items: any;
@@ -15,12 +18,13 @@ export class WialonBaseList implements OnInit, OnDestroy {
   searching: boolean;
   _itemsEmpty: boolean;
 
-  private getName(obj) {
+  public getName(obj) {
+
     return (obj && obj.getName) ? obj.getName() : '';
   }
 
-  private getId(obj) {
-    return (obj && obj.getId) ? obj.getId() : -1;
+  public getId(obj) {
+    return (obj && obj.getId) ? String( obj.getId() ) : '';
   }
 
   ngOnInit() {
@@ -32,29 +36,70 @@ export class WialonBaseList implements OnInit, OnDestroy {
   }
 
   onSearch(val: any) {
+    const filterName = (value) => {
+      let temp = this._items;
+      if (this._items) {
+
+        if (value && value.trim() !== '') {
+          temp = this._items.filter( (item) => {
+              return ((this.getName( item ) &&
+                this.getName( item ).toLowerCase().indexOf( value.toLowerCase() ) > -1));
+            }
+          );
+
+        } else {
+          this.searching = false;
+          this.filter = '';
+        }
+
+      }
+      return temp;
+    };
+
+    const filterId = (value) => {
+      let temp = this._items;
+      if (this._items) {
+
+        if (value && value.trim() !== '') {
+          temp = this._items.filter( (item) => {
+
+              return ((this.getId( item ) &&
+                this.getId( item ).toLowerCase().indexOf( value.toLowerCase() ) > -1));
+            }
+          );
+
+        } else {
+          this.searching = false;
+          this.filter = '';
+        }
+
+      }
+      return temp;
+    };
+
+
+    this.searching = true;
+    this.items = this._items;
     if (!val) {
       val = '';
     }
 
-    this.searching = true;
-    this.items = this._items;
+    if (Array.isArray( val )) {
 
-    if (this.items) {
+      this.items = [];
+      val.forEach( fval => {
+        this.items = this.items.concat( filterId( fval ) );
+      } );
 
-      if (val && val.trim() !== '') {
-        this.items = this.items.filter( (item) => {
-            return ((this.getName( item ) &&
-              this.getName( item ).toLowerCase().indexOf( val.toLowerCase() ) > -1));
-          }
-        );
+    } else {
+      this.items = filterName( val );
 
-      } else {
-        this.searching = false;
-        this.filter = '';
-      }
-      this._itemsEmpty = (this.items.length < 1);
+
     }
+    this._itemsEmpty = (this.items.length < 1);
+
 
   }
+
 
 }
